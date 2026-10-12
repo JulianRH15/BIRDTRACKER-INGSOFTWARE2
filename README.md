@@ -2,6 +2,10 @@
 
 API REST para registrar, consultar, actualizar y eliminar avistamientos de aves. El proyecto está construido con Java 21 y Spring Boot 3.4.5; usa Spring Data JPA y una base de datos H2 en archivo para conservar los registros entre reinicios.
 
+## Uso de IA
+
+Se utilizó ChatGPT (modelo GPT-6) como asistencia para redactar este README.
+
 ## Requisitos
 
 - JDK 21

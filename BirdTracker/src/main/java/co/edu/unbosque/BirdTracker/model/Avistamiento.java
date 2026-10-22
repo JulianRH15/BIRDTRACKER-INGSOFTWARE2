@@ -14,13 +14,12 @@ import jakarta.validation.constraints.Size;
 @Entity
 @Table(name = "avistamientos")
 public class Avistamiento {
-
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     @NotBlank(message = "La especie es obligatoria")
-    @Size(max = 120, message = "La especie no puede superar 120 caracteres")
+    @Size(min = 3, max = 50, message = "La especie debe tener entre 3 y 50 caracteres")
     private String especie;
 
     @NotBlank(message = "El lugar es obligatorio")

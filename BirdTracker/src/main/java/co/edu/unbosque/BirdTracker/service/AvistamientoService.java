@@ -7,17 +7,20 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.server.ResponseStatusException;
 
+import co.edu.unbosque.BirdTracker.dto.AvistamientoRequest;
 import co.edu.unbosque.BirdTracker.model.Avistamiento;
 import co.edu.unbosque.BirdTracker.repository.AvistamientoRepository;
+import co.edu.unbosque.BirdTracker.validacion.ValidadorDeAvistamiento;
 
 @Service
 @Transactional
 public class AvistamientoService {
-
     private final AvistamientoRepository repository;
+    private final ValidadorDeAvistamiento validador;
 
-    public AvistamientoService(AvistamientoRepository repository) {
+    public AvistamientoService(AvistamientoRepository repository, ValidadorDeAvistamiento validador) {
         this.repository = repository;
+        this.validador = validador;
     }
 
     @Transactional(readOnly = true)
@@ -31,17 +34,20 @@ public class AvistamientoService {
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Avistamiento no encontrado"));
     }
 
-    public Avistamiento crear(Avistamiento avistamiento) {
-        avistamiento.setId(null);
-        return repository.save(avistamiento);
+    public Avistamiento crear(AvistamientoRequest request) {
+        validador.validar(request);
+        Avistamiento nuevo = new Avistamiento(request.especie().strip(), request.lugar().strip(),
+                ValidadorDeAvistamiento.convertirFecha(request.fecha().strip()), request.observador().strip());
+        return repository.save(nuevo);
     }
 
-    public Avistamiento actualizar(Long id, Avistamiento datos) {
+    public Avistamiento actualizar(Long id, AvistamientoRequest request) {
+        validador.validar(request);
         Avistamiento existente = buscar(id);
-        existente.setEspecie(datos.getEspecie());
-        existente.setLugar(datos.getLugar());
-        existente.setFecha(datos.getFecha());
-        existente.setObservador(datos.getObservador());
+        existente.setEspecie(request.especie().strip());
+        existente.setLugar(request.lugar().strip());
+        existente.setFecha(ValidadorDeAvistamiento.convertirFecha(request.fecha().strip()));
+        existente.setObservador(request.observador().strip());
         return repository.save(existente);
     }
 

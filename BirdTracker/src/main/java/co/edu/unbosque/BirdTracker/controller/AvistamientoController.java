@@ -3,8 +3,6 @@ package co.edu.unbosque.BirdTracker.controller;
 import java.net.URI;
 import java.util.List;
 
-import jakarta.validation.Valid;
-
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -17,6 +15,7 @@ import org.springframework.web.bind.annotation.RestController;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 
+import co.edu.unbosque.BirdTracker.dto.AvistamientoRequest;
 import co.edu.unbosque.BirdTracker.model.Avistamiento;
 import co.edu.unbosque.BirdTracker.repository.AvistamientoRepository;
 import co.edu.unbosque.BirdTracker.service.AvistamientoService;
@@ -25,7 +24,6 @@ import co.edu.unbosque.BirdTracker.service.AvistamientoService;
 @RequestMapping(path = "/avistamientos", produces = "application/json")
 @Tag(name = "Avistamientos", description = "Registro y consulta de avistamientos de aves")
 public class AvistamientoController {
-
     private final AvistamientoService service;
 
     public AvistamientoController(AvistamientoService service) {
@@ -52,7 +50,7 @@ public class AvistamientoController {
 
     @PostMapping(consumes = "application/json")
     @Operation(summary = "Registrar un avistamiento")
-    public ResponseEntity<Avistamiento> crear(@Valid @RequestBody Avistamiento avistamiento) {
+    public ResponseEntity<Avistamiento> crear(@RequestBody AvistamientoRequest avistamiento) {
         Avistamiento creado = service.crear(avistamiento);
         return ResponseEntity.created(URI.create("/avistamientos/" + creado.getId())).body(creado);
     }
@@ -60,7 +58,7 @@ public class AvistamientoController {
     @PutMapping(path = "/{id}", consumes = "application/json")
     @Operation(summary = "Reemplazar un avistamiento")
     public ResponseEntity<Avistamiento> actualizar(@PathVariable Long id,
-            @Valid @RequestBody Avistamiento avistamiento) {
+            @RequestBody AvistamientoRequest avistamiento) {
         return ResponseEntity.ok(service.actualizar(id, avistamiento));
     }
 

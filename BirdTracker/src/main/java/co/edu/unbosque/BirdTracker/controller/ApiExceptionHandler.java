@@ -13,9 +13,10 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.server.ResponseStatusException;
 
+import co.edu.unbosque.BirdTracker.validacion.AvistamientoInvalidoException;
+
 @RestControllerAdvice
 public class ApiExceptionHandler {
-
     @ExceptionHandler(MethodArgumentNotValidException.class)
     public ResponseEntity<Map<String, Object>> manejarValidacion(MethodArgumentNotValidException exception) {
         Map<String, String> errores = exception.getBindingResult().getFieldErrors().stream()
@@ -24,9 +25,14 @@ public class ApiExceptionHandler {
         return respuesta(HttpStatus.BAD_REQUEST, "Datos inválidos", errores);
     }
 
+    @ExceptionHandler(AvistamientoInvalidoException.class)
+    public ResponseEntity<Map<String, Object>> manejarReglaDeNegocio(AvistamientoInvalidoException exception) {
+        return respuesta(HttpStatus.BAD_REQUEST, exception.getMessage(), exception.getErrores());
+    }
+
     @ExceptionHandler(HttpMessageNotReadableException.class)
     public ResponseEntity<Map<String, Object>> manejarJsonInvalido(HttpMessageNotReadableException exception) {
-        return respuesta(HttpStatus.BAD_REQUEST, "JSON inválido o fecha con formato incorrecto (use AAAA-MM-DD)", null);
+        return respuesta(HttpStatus.BAD_REQUEST, "JSON inválido o mal formado", null);
     }
 
     @ExceptionHandler(ResponseStatusException.class)

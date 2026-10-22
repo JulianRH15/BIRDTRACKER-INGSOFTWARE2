@@ -1,5 +1,7 @@
 # Justificación de las pruebas — BirdTracker
 
+**Julian Samuel Rodriguez Hernandez** · Ingeniería de Software 2
+
 ## 1. Qué cambió en el código
 
 | Cambio | Antes | Después | Por qué hace la API más testeable |

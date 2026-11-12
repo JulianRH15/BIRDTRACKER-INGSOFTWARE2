@@ -1,0 +1,129 @@
+openapi: 3.0.3
+info:
+  title: BirdTracker - API de avistamientos
+  version: 1.0.0
+  description: API REST síncrona para registrar y consultar avistamientos de aves.
+servers:
+  - url: http://localhost:8080
+paths:
+  /avistamientos:
+    get:
+      summary: Listar avistamientos
+      responses:
+        '200':
+          description: Lista de avistamientos (puede estar vacía).
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Avistamiento'
+    post:
+      summary: Registrar un avistamiento
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/NuevoAvistamiento'
+      responses:
+        '201':
+          description: Recurso creado; Location contiene su URL.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Avistamiento'
+        '400':
+          description: JSON o datos inválidos.
+  /avistamientos/resumen:
+    get:
+      summary: Contar avistamientos por especie
+      responses:
+        '200':
+          description: Conteo agrupado por especie.
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: object
+                  required: [especie, cantidad]
+                  properties:
+                    especie:
+                      type: string
+                    cantidad:
+                      type: integer
+                      format: int64
+  /avistamientos/{id}:
+    parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: integer
+          format: int64
+    get:
+      summary: Consultar un avistamiento
+      responses:
+        '200':
+          description: Avistamiento encontrado.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Avistamiento'
+        '404':
+          description: Avistamiento no encontrado.
+    put:
+      summary: Reemplazar un avistamiento
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/NuevoAvistamiento'
+      responses:
+        '200':
+          description: Avistamiento actualizado.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Avistamiento'
+        '400':
+          description: JSON o datos inválidos.
+        '404':
+          description: Avistamiento no encontrado.
+    delete:
+      summary: Eliminar un avistamiento
+      responses:
+        '204':
+          description: Eliminado sin contenido de respuesta.
+        '404':
+          description: Avistamiento no encontrado.
+components:
+  schemas:
+    NuevoAvistamiento:
+      type: object
+      required: [especie, lugar, fecha, observador]
+      properties:
+        especie:
+          type: string
+          example: Colibrí
+        lugar:
+          type: string
+          example: Jardín Botánico
+        fecha:
+          type: string
+          format: date
+          example: '2025-09-29'
+        observador:
+          type: string
+          example: Ana Pérez
+    Avistamiento:
+      allOf:
+        - $ref: '#/components/schemas/NuevoAvistamiento'
+        - type: object
+          required: [id]
+          properties:
+            id:
+              type: integer
+              format: int64
